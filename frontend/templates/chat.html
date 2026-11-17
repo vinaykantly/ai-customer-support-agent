@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Support Assistant - Multilingual RAG Chatbot</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/chat.css">
+</head>
+<body style="background: var(--bg-page);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand" style="text-decoration:none;">
+      <span>🤖</span>
+      <span>Aegis<span style="color:var(--accent-cyan);">Support</span></span>
+      <span class="brand-badge">Gemini RAG Assistant</span>
+    </a>
+    <div class="nav-links">
+      <a href="/customer_dashboard.html" class="nav-link">Customer Portal</a>
+      <a href="/customer_tickets.html" class="nav-link">My Tickets</a>
+    </div>
+    <div id="nav-user-slot" class="user-menu"></div>
+  </header>
+
+  <div class="main-content" style="padding-top:1.5rem;">
+    <!-- Chat Container Box -->
+    <div class="chat-wrapper">
+      <!-- Chat Sessions Sidebar -->
+      <aside class="chat-sessions-panel">
+        <div class="sessions-header">
+          <span style="font-weight:700; font-size:0.9rem; color:var(--navy-900);">Conversations</span>
+          <button onclick="createNewSession()" class="btn btn-primary btn-sm" style="padding:0.25rem 0.6rem; font-size:0.75rem;">+ New Chat</button>
+        </div>
+        <div id="sessions-list" class="sessions-list">
+          <div style="color:#94a3b8; font-size:0.8rem; text-align:center; padding:1rem;">Loading sessions...</div>
+        </div>
+      </aside>
+
+      <!-- Chat Main Stage -->
+      <section class="chat-main">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="bot-info">
+            <div class="bot-avatar">🤖</div>
+            <div>
+              <div style="font-weight:700; font-size:0.95rem; color:var(--navy-900);">Aegis AI Support Assistant</div>
+              <div class="bot-status">
+                <span class="status-dot"></span>
+                <span>Online • Powered by Gemini & pgvector</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <!-- Language Selector -->
+            <select id="lang-select" class="form-control" style="width:auto; padding:0.4rem 0.75rem; font-size:0.85rem;">
+              <option value="en" selected>English</option>
+              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+            </select>
+
+            <!-- Star Feedback Button -->
+            <button onclick="openFeedbackModal()" class="btn btn-secondary btn-sm" title="Rate this conversation">
+              ⭐ Feedback
+            </button>
+
+            <!-- Human Escalation Button -->
+            <button onclick="triggerEscalation()" class="btn btn-outline btn-sm">
+              🚨 Escalate to Human
+            </button>
+          </div>
+        </div>
+
+        <!-- Escalation Banner (Conditional) -->
+        <div id="escalate-banner" style="display:none; background:#fef2f2; border-bottom:1px solid #fecaca; padding:0.6rem 1.5rem; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.85rem; color:#991b1b; font-weight:600;">
+            ⚠️ Customer frustration or complex issue detected. You can transfer directly to a human support agent.
+          </span>
+          <button onclick="triggerEscalation()" class="btn btn-danger btn-sm" style="font-size:0.8rem;">
+            Transfer Now
+          </button>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="messages-container" class="messages-container">
+          <!-- Initial Welcome Message -->
+          <div class="message-row message-bot">
+            <div class="bot-avatar" style="width:34px; height:34px; font-size:0.95rem;">🤖</div>
+            <div class="bubble">
+              <div>
+                Hello! I am your AI Customer Support Assistant. I can answer inquiries about our services, refund policies, billing, account security, and technical troubleshooting.
+                <br/><br/>
+                You can ask questions in <strong>English</strong>, <strong>Kannada (ಕನ್ನಡ)</strong>, or <strong>Hindi (हिन्दी)</strong>!
+              </div>
+              <span class="msg-time">Just now</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggested Questions Bar -->
+        <div id="suggested-questions-bar" class="suggested-bar"></div>
+
+        <!-- Input Box -->
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Ask a question about refund policies, SLAs, technical issues..." autocomplete="off">
+          <button id="send-btn" class="btn btn-primary" style="border-radius:24px; padding:0.75rem 1.4rem;">
+            Send ➤
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Feedback Modal -->
+  <div id="feedback-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+      <h3 style="font-size:1.35rem; font-weight:800; color:var(--navy-900); margin-bottom:0.5rem;">Rate Your Conversation</h3>
+      <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.25rem;">
+        How helpful was our AI Customer Support Assistant today?
+      </p>
+
+      <div class="star-rating">
+        <span class="star active" onclick="setStarRating(1)">★</span>
+        <span class="star active" onclick="setStarRating(2)">★</span>
+        <span class="star active" onclick="setStarRating(3)">★</span>
+        <span class="star active" onclick="setStarRating(4)">★</span>
+        <span class="star active" onclick="setStarRating(5)">★</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="feedback-comment">Additional Comments (Optional)</label>
+        <textarea id="feedback-comment" class="form-control" rows="3" placeholder="Tell us what went well or what could be improved..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+        <button type="button" onclick="closeFeedbackModal()" class="btn btn-secondary">Cancel</button>
+        <button type="button" onclick="submitChatFeedback()" class="btn btn-primary">Submit Feedback</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/chat.js"></script>
+  <script>
+    function createNewSession() {
+      const newSess = `sess_${Math.random().toString(36).substring(2, 12)}`;
+      localStorage.setItem("active_chat_session", newSess);
+      currentSessionId = newSess;
+      currentConversationId = null;
+      document.getElementById("messages-container").innerHTML = `
+        <div class="message-row message-bot">
+          <div class="bot-avatar" style="width:34px; height:34px; font-size:0.95rem;">🤖</div>
+          <div class="bubble">
+            <div>Started a new conversation session. How can I assist you?</div>
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+      `;
+      loadSuggestedQuestions();
+      loadRecentSessions();
+      showToast("Started new chat session", "info");
+    }
+  </script>
+</body>
+</html>

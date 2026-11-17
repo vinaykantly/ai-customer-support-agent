@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Customer Support Agent - Enterprise GenAI & RAG Platform</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <span style="font-size:1.5rem;">🤖</span>
+      <span>Aegis<span style="color:var(--accent-cyan);">Support</span></span>
+      <span class="brand-badge">Gemini RAG</span>
+    </div>
+    <nav class="nav-links">
+      <a href="/index.html" class="nav-link active">Home</a>
+      <a href="/chat.html" class="nav-link">AI Assistant Demo</a>
+      <a href="/login.html" class="nav-link">Portals</a>
+    </nav>
+    <div id="nav-user-slot" class="user-menu"></div>
+  </header>
+
+  <!-- Hero Section -->
+  <section style="background: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%); color:#ffffff; padding: 5rem 2rem 4rem; text-align: center;">
+    <div style="max-width: 900px; margin: 0 auto;">
+      <span class="badge" style="background: rgba(37, 99, 235, 0.25); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); margin-bottom: 1.5rem; padding: 0.4rem 1rem;">
+        Next-Generation Customer Experience
+      </span>
+      <h1 style="font-size: 3.25rem; font-weight: 800; line-height: 1.15; margin-bottom: 1.5rem; letter-spacing: -0.03em;">
+        AI-Powered Customer Support <br/>
+        <span style="background: linear-gradient(90deg, #60a5fa, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Grounded in Truth, Powered by Gemini
+        </span>
+      </h1>
+      <p style="font-size: 1.2rem; color: #94a3b8; max-width: 720px; margin: 0 auto 2.5rem; line-height: 1.6;">
+        Deliver instant, accurate, and multilingual support grounded in your company's official documentation. Automate complaint resolution, detect customer sentiment, and seamlessly escalate to human specialists.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/chat.html" class="btn btn-primary" style="padding: 0.85rem 1.85rem; font-size: 1.05rem;">
+          💬 Launch Live AI Assistant
+        </a>
+        <a href="/login.html" class="btn btn-secondary" style="padding: 0.85rem 1.85rem; font-size: 1.05rem;">
+          🔑 Explore Role Dashboards
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Architecture Pillars Grid -->
+  <section style="max-width: 1200px; margin: -2rem auto 4rem; padding: 0 1.5rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+      <div class="card" style="box-shadow: var(--shadow-lg);">
+        <div style="font-size: 2rem; margin-bottom: 1rem;">🧠</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--navy-900);">Google Gemini GenAI</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Powered by Gemini 1.5 Flash. Context-aware natural language understanding with zero hallucination guardrails.
+        </p>
+      </div>
+
+      <div class="card" style="box-shadow: var(--shadow-lg);">
+        <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--navy-900);">pgvector RAG Pipeline</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Extracts and semantically chunks company PDFs, indexing 768-dimensional embeddings for verified source citations.
+        </p>
+      </div>
+
+      <div class="card" style="box-shadow: var(--shadow-lg);">
+        <div style="font-size: 2rem; margin-bottom: 1rem;">🌐</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--navy-900);">Trilingual Support</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Native conversational support in <strong>English</strong>, <strong>Kannada (ಕನ್ನಡ)</strong>, and <strong>Hindi (हिन्दी)</strong>.
+        </p>
+      </div>
+
+      <div class="card" style="box-shadow: var(--shadow-lg);">
+        <div style="font-size: 2rem; margin-bottom: 1rem;">🎫</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--navy-900);">Smart Escalation</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Detects customer frustration and automatically creates priority support tickets with conversation transcripts.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Role Portals Preview -->
+  <section style="background: var(--surface); padding: 4rem 2rem; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h2 style="font-size: 2.25rem; font-weight: 800; color: var(--navy-900); margin-bottom: 0.75rem;">
+          Tailored Workspaces for Every Stakeholder
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+          Experience separate portals for Customers, Support Agents, and Administrators.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+        <!-- Customer Portal Card -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <span class="badge badge-open" style="margin-bottom: 1rem;">Customer Portal</span>
+            <h3 style="font-size: 1.35rem; margin-bottom: 0.75rem; color: var(--navy-900);">Instant Resolution</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+              <li>✓ Conversational AI chatbot with verified document citations</li>
+              <li>✓ Dynamic language switching (EN, KN, HI)</li>
+              <li>✓ Ticket submission, status tracking & timeline</li>
+              <li>✓ 1-click human agent escalation</li>
+            </ul>
+          </div>
+          <a href="/login.html" onclick="Auth.fillDemo('customer')" class="btn btn-outline btn-block">Customer Login Demo</a>
+        </div>
+
+        <!-- Agent Portal Card -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; border-color: var(--primary);">
+          <div>
+            <span class="badge badge-in_progress" style="margin-bottom: 1rem;">Support Agent Portal</span>
+            <h3 style="font-size: 1.35rem; margin-bottom: 0.75rem; color: var(--navy-900);">Resolution Workbench</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+              <li>✓ Assigned ticket queues prioritized by urgency</li>
+              <li>✓ Access full chatbot transcripts & customer sentiment</li>
+              <li>✓ Private internal notes vs public replies</li>
+              <li>✓ AI-assisted customer response drafting</li>
+            </ul>
+          </div>
+          <a href="/login.html" onclick="Auth.fillDemo('agent')" class="btn btn-primary btn-block">Agent Login Demo</a>
+        </div>
+
+        <!-- Admin Portal Card -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <span class="badge badge-urgent" style="margin-bottom: 1rem;">Administrator Center</span>
+            <h3 style="font-size: 1.35rem; margin-bottom: 0.75rem; color: var(--navy-900);">Executive Command</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+              <li>✓ KPI Analytics: CSAT %, Avg Response Time, Volume</li>
+              <li>✓ PDF Knowledge Base uploader & semantic chunker</li>
+              <li>✓ Interactive vector search test sandbox</li>
+              <li>✓ Live conversation monitoring & FAQ manager</li>
+            </ul>
+          </div>
+          <a href="/login.html" onclick="Auth.fillDemo('admin')" class="btn btn-outline btn-block">Admin Login Demo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: var(--navy-950); color: #64748b; padding: 3rem 2rem; text-align: center; font-size: 0.9rem;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+      <div style="font-weight: 700; color: #ffffff; font-size: 1.1rem;">AI-Powered Customer Support Agent</div>
+      <p>Built with Python Flask, Google Gemini GenAI, Supabase pgvector, and Modern Responsive Frontend.</p>
+      <p>© 2026 Enterprise Support Systems. Production-Ready Portfolio Architecture.</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

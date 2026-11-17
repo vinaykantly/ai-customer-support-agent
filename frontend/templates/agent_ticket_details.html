@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resolve Ticket - Agent Resolution Workspace</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand" style="text-decoration:none;">
+      <span>🤖</span>
+      <span>Aegis<span style="color:var(--accent-cyan);">Support</span></span>
+      <span class="brand-badge" style="background:linear-gradient(135deg, #10b981, #059669);">Resolution Workbench</span>
+    </a>
+    <div id="nav-user-slot" class="user-menu"></div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Navigation</div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="/agent_dashboard.html" class="sidebar-link active">
+            <span class="sidebar-icon">⬅️</span>
+            <span>Back to Queue</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <!-- Breadcrumb & Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <span id="ws-ticket-number" style="font-size:1.1rem; font-weight:800; color:var(--primary);"></span>
+          <h1 id="ws-title" style="font-size:1.65rem; font-weight:800; color:var(--navy-900); margin-top:0.25rem;">Loading Ticket...</h1>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <span id="ws-priority-badge" class="badge"></span>
+          <select id="ws-status-select" class="form-control" style="width:auto; font-weight:700;" onchange="updateTicketStatusFromSelect()">
+            <option value="OPEN">Status: OPEN</option>
+            <option value="IN_PROGRESS">Status: IN_PROGRESS</option>
+            <option value="ESCALATED">Status: ESCALATED</option>
+            <option value="RESOLVED">Status: RESOLVED</option>
+            <option value="CLOSED">Status: CLOSED</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Workspace 2-Column Grid -->
+      <div class="workspace-grid">
+        <!-- Left: Case Details & Communication Timeline -->
+        <div>
+          <!-- Complaint Box -->
+          <div class="card" style="margin-bottom:1.25rem;">
+            <div class="card-header">
+              <h3 class="card-title">Customer Complaint & Transcript</h3>
+              <span id="ws-category" class="badge" style="background:#f1f5f9;">GENERAL</span>
+            </div>
+            <div id="ws-description" style="font-size:0.95rem; color:var(--text-main); line-height:1.6; white-space:pre-wrap;"></div>
+          </div>
+
+          <!-- Notes & Responses Timeline -->
+          <div class="card" style="margin-bottom:1.25rem;">
+            <div class="card-header">
+              <h3 class="card-title">Communication Log</h3>
+              <span style="font-size:0.8rem; color:var(--text-muted);">Includes Public Replies & Internal Notes</span>
+            </div>
+            <div id="ws-notes-timeline" class="ticket-timeline"></div>
+          </div>
+
+          <!-- Response Composer -->
+          <div class="card">
+            <div class="tabs-header">
+              <button class="tab-btn active" id="tab-public-btn" onclick="switchTab('public')">💬 Reply to Customer</button>
+              <button class="tab-btn" id="tab-internal-btn" onclick="switchTab('internal')">🔒 Private Internal Note</button>
+            </div>
+
+            <!-- Public Reply Box -->
+            <div id="panel-public-reply">
+              <div class="form-group">
+                <textarea id="ws-public-response-text" class="form-control" rows="4" placeholder="Draft a verified response to send directly to the customer..."></textarea>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" onclick="generateAIDraft()" class="btn btn-outline btn-sm">
+                  ✨ Auto-Generate AI Draft
+                </button>
+                <button type="button" onclick="sendAgentPublicResponse()" class="btn btn-primary">
+                  Send Response to Customer
+                </button>
+              </div>
+            </div>
+
+            <!-- Internal Note Box -->
+            <div id="panel-internal-note" style="display:none;">
+              <div class="form-group">
+                <textarea id="ws-internal-note-text" class="form-control" rows="3" placeholder="Add an internal note only visible to support team members..."></textarea>
+              </div>
+              <div style="display:flex; justify-content:flex-end;">
+                <button type="button" onclick="addAgentInternalNote()" class="btn btn-secondary">
+                  Save Internal Note
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Customer Metadata & Quick Actions -->
+        <div>
+          <!-- Customer Profile Card -->
+          <div class="card" style="margin-bottom:1.25rem;">
+            <h3 class="card-title" style="margin-bottom:1rem;">Customer Profile</h3>
+            <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.9rem;">
+              <div>
+                <span style="color:var(--text-muted); display:block; font-size:0.75rem; text-transform:uppercase;">Name:</span>
+                <strong id="ws-customer-name" style="color:var(--navy-900);">Customer</strong>
+              </div>
+              <div>
+                <span style="color:var(--text-muted); display:block; font-size:0.75rem; text-transform:uppercase;">Email:</span>
+                <span id="ws-customer-email" style="color:var(--text-main);">email@example.com</span>
+              </div>
+              <div>
+                <span style="color:var(--text-muted); display:block; font-size:0.75rem; text-transform:uppercase;">Customer Tier:</span>
+                <span class="badge badge-open">Enterprise SLA</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Resolution Actions -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:1rem;">Quick Actions</h3>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+              <button onclick="quickResolve()" class="btn btn-primary btn-block">
+                ✅ Mark as RESOLVED
+              </button>
+              <button onclick="quickEscalate()" class="btn btn-danger btn-block">
+                🚨 Escalate to Lead
+              </button>
+              <a href="/agent_dashboard.html" class="btn btn-secondary btn-block">
+                Return to Queue
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/agent.js"></script>
+  <script>
+    function switchTab(type) {
+      if (type === 'public') {
+        document.getElementById("panel-public-reply").style.display = "block";
+        document.getElementById("panel-internal-note").style.display = "none";
+        document.getElementById("tab-public-btn").classList.add("active");
+        document.getElementById("tab-internal-btn").classList.remove("active");
+      } else {
+        document.getElementById("panel-public-reply").style.display = "none";
+        document.getElementById("panel-internal-note").style.display = "block";
+        document.getElementById("tab-public-btn").classList.remove("active");
+        document.getElementById("tab-internal-btn").classList.add("active");
+      }
+    }
+
+    async function quickResolve() {
+      if (!confirm("Are you sure you want to mark this ticket as RESOLVED?")) return;
+      document.getElementById("ws-status-select").value = "RESOLVED";
+      await updateTicketStatusFromSelect();
+    }
+
+    async function quickEscalate() {
+      if (!confirm("Are you sure you want to ESCALATE this ticket?")) return;
+      document.getElementById("ws-status-select").value = "ESCALATED";
+      await updateTicketStatusFromSelect();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Agent Dashboard - Workload & Queue</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand" style="text-decoration:none;">
+      <span>🤖</span>
+      <span>Aegis<span style="color:var(--accent-cyan);">Support</span></span>
+      <span class="brand-badge" style="background:linear-gradient(135deg, #10b981, #059669);">Agent Workbench</span>
+    </a>
+    <div id="nav-user-slot" class="user-menu"></div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-heading">Agent Operations</div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="/agent_dashboard.html" class="sidebar-link active">
+            <span class="sidebar-icon">📥</span>
+            <span>Assigned Tickets</span>
+          </a>
+        </li>
+        <li>
+          <a href="/chat.html" class="sidebar-link">
+            <span class="sidebar-icon">🤖</span>
+            <span>AI Assistant Sandbox</span>
+          </a>
+        </li>
+        <li>
+          <a href="/profile.html" class="sidebar-link">
+            <span class="sidebar-icon">👤</span>
+            <span>Agent Profile</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Agent Availability Toggle Box -->
+      <div style="margin-top:auto; background:var(--navy-800); padding:1rem; border-radius:var(--radius-md);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.85rem; font-weight:600; color:#ffffff;">Accepting Tickets</span>
+          <label style="position:relative; display:inline-block; width:40px; height:22px;">
+            <input type="checkbox" id="agent-avail-toggle" checked onchange="toggleAgentAvailability(this)" style="opacity:0; width:0; height:0;">
+            <span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#10b981; border-radius:22px; transition:0.3s;" id="slider-track"></span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h1 style="font-size:1.75rem; font-weight:800; color:var(--navy-900);">Support Agent Workspace</h1>
+          <p style="color:var(--text-secondary); font-size:0.95rem;">
+            Review and resolve assigned customer inquiries, manage complaint escalations, and record internal notes.
+          </p>
+        </div>
+        <button onclick="loadAgentDashboard()" class="btn btn-secondary">
+          🔄 Refresh Queue
+        </button>
+      </div>
+
+      <!-- Agent Metrics Grid -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-info">
+            <span class="metric-title">Assigned Tickets</span>
+            <span class="metric-value" id="stat-agent-total">0</span>
+          </div>
+          <div class="metric-icon-box metric-icon-blue">📥</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-info">
+            <span class="metric-title">Open Queue</span>
+            <span class="metric-value" id="stat-agent-open">0</span>
+          </div>
+          <div class="metric-icon-box metric-icon-amber">⏳</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-info">
+            <span class="metric-title">In Progress</span>
+            <span class="metric-value" id="stat-agent-progress">0</span>
+          </div>
+          <div class="metric-icon-box metric-icon-purple">⚙️</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-info">
+            <span class="metric-title">Resolved</span>
+            <span class="metric-value" id="stat-agent-resolved">0</span>
+          </div>
+          <div class="metric-icon-box metric-icon-green">✅</div>
+        </div>
+      </div>
+
+      <!-- Assigned Tickets Table -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Priority Ticket Queue</h2>
+          <span style="font-size:0.85rem; color:var(--text-muted);">Ranked by Urgency SLA</span>
+        </div>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Subject</th>
+                <th>Customer</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="agent-tickets-tbody">
+              <tr><td colspan="7" style="text-align:center; padding:2rem; color:#94a3b8;">Loading assigned queue...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/main.js"></script>
+  <script src="/static/js/agent.js"></script>
+</body>
+</html>

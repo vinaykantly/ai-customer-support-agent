@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile & Security Settings</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand" style="text-decoration:none;">
+      <span>🤖</span>
+      <span>Aegis<span style="color:var(--accent-cyan);">Support</span></span>
+      <span class="brand-badge">Account Settings</span>
+    </a>
+    <div id="nav-user-slot" class="user-menu"></div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Account</div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="#" onclick="history.back(); return false;" class="sidebar-link">
+            <span class="sidebar-icon">⬅️</span>
+            <span>Back to Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/profile.html" class="sidebar-link active">
+            <span class="sidebar-icon">👤</span>
+            <span>Profile & Security</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div style="margin-bottom:2rem;">
+        <h1 style="font-size:1.75rem; font-weight:800; color:var(--navy-900);">My Profile & Settings</h1>
+        <p style="color:var(--text-secondary); font-size:0.95rem;">
+          Manage your account credentials, contact information, and role configurations.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 2fr; gap:1.5rem;">
+        <!-- Left: Profile Summary Card -->
+        <div class="card" style="text-align:center; padding:2rem 1.5rem;">
+          <div id="prof-avatar" class="user-avatar" style="width:72px; height:72px; font-size:1.75rem; margin:0 auto 1rem;">U</div>
+          <h2 id="prof-name" style="font-size:1.25rem; font-weight:800; color:var(--navy-900);">User Name</h2>
+          <span id="prof-role-badge" class="badge badge-open" style="margin:0.5rem 0 1.25rem;">Customer</span>
+
+          <div style="text-align:left; border-top:1px solid var(--border-light); padding-top:1.25rem; display:flex; flex-direction:column; gap:0.75rem; font-size:0.875rem;">
+            <div>
+              <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Email:</span>
+              <div id="prof-email" style="font-weight:600; color:var(--text-main);">email@example.com</div>
+            </div>
+            <div>
+              <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Phone:</span>
+              <div id="prof-phone" style="font-weight:600; color:var(--text-main);">Not provided</div>
+            </div>
+            <div id="agent-meta-box" style="display:none;">
+              <span style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;">Department:</span>
+              <div id="prof-dept" style="font-weight:600; color:var(--navy-900);">General Support</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Edit Details & Security -->
+        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+          <!-- Edit Contact Info -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:1.25rem;">Personal Details</h3>
+            <form id="edit-profile-form" onsubmit="event.preventDefault(); saveProfileChanges();">
+              <div class="form-group">
+                <label class="form-label" for="edit-name">Full Name</label>
+                <input type="text" id="edit-name" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="edit-phone">Phone Number</label>
+                <input type="text" id="edit-phone" class="form-control" placeholder="+1-800-555-0199">
+              </div>
+
+              <div style="display:flex; justify-content:flex-end;">
+                <button type="submit" class="btn btn-primary">Save Personal Info</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Change Password -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:1.25rem;">Security & Password</h3>
+            <form id="change-pwd-form" onsubmit="event.preventDefault(); changePassword();">
+              <div class="form-group">
+                <label class="form-label" for="new-password">New Password</label>
+                <input type="password" id="new-password" class="form-control" placeholder="Minimum 6 characters" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="confirm-password">Confirm New Password</label>
+                <input type="password" id="confirm-password" class="form-control" placeholder="Repeat new password" required>
+              </div>
+
+              <div style="display:flex; justify-content:flex-end;">
+                <button type="submit" class="btn btn-secondary">Update Password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!Auth.requireAuth()) return;
+      loadProfileData();
+    });
+
+    async function loadProfileData() {
+      try {
+        const res = await API.get("/auth/profile");
+        const u = res.user;
+
+        document.getElementById("prof-name").innerText = u.full_name;
+        document.getElementById("prof-email").innerText = u.email;
+        document.getElementById("prof-phone").innerText = u.phone || "Not set";
+        document.getElementById("edit-name").value = u.full_name;
+        document.getElementById("edit-phone").value = u.phone || "";
+
+        const initials = u.full_name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+        document.getElementById("prof-avatar").innerText = initials;
+
+        const roleBadge = document.getElementById("prof-role-badge");
+        roleBadge.innerText = u.role.toUpperCase();
+        if (u.role === "admin") roleBadge.className = "badge badge-urgent";
+        else if (u.role === "agent") roleBadge.className = "badge badge-in_progress";
+        else roleBadge.className = "badge badge-open";
+
+        if (u.role === "agent" && u.agent_info) {
+          document.getElementById("agent-meta-box").style.display = "block";
+          document.getElementById("prof-dept").innerText = u.agent_info.department;
+        }
+
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function saveProfileChanges() {
+      const full_name = document.getElementById("edit-name").value.trim();
+      const phone = document.getElementById("edit-phone").value.trim();
+
+      try {
+        const res = await API.put("/auth/profile", { full_name, phone });
+        Auth.setUser(res.user);
+        showToast("Profile information updated successfully.", "success");
+        loadProfileData();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
+    async function changePassword() {
+      const p1 = document.getElementById("new-password").value;
+      const p2 = document.getElementById("confirm-password").value;
+
+      if (p1 !== p2) {
+        showToast("Passwords do not match.", "error");
+        return;
+      }
+
+      try {
+        await API.put("/auth/profile", { password: p1 });
+        showToast("Password updated successfully.", "success");
+        document.getElementById("change-pwd-form").reset();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

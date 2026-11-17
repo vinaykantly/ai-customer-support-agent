@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AI Customer Support Agent</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: var(--bg-page);">
+
+  <header class="navbar">
+    <a href="/index.html" class="nav-brand" style="text-decoration:none;">
+      <span>🤖</span>
+      <span>Aegis<span style="color:var(--accent-cyan);">Support</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="/index.html" class="nav-link">Home</a>
+      <a href="/chat.html" class="nav-link">AI Assistant</a>
+    </div>
+  </header>
+
+  <main style="flex:1; display:flex; align-items:center; justify-content:center; padding: 2rem 1rem;">
+    <div class="card" style="max-width: 460px; width: 100%; padding: 2.25rem; box-shadow: var(--shadow-xl);">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--navy-900);">Sign In</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.35rem;">
+          Access your personalized customer support portal
+        </p>
+      </div>
+
+      <!-- Quick 1-Click Recruiter Demo Buttons -->
+      <div style="background: var(--surface-alt); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); margin-bottom: 1.5rem;">
+        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--navy-700); display: block; margin-bottom: 0.5rem;">
+          ⚡ 1-Click Demo Evaluation Logins:
+        </span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+          <button type="button" onclick="Auth.fillDemo('customer')" class="btn btn-secondary btn-sm" style="font-size:0.75rem;">Customer</button>
+          <button type="button" onclick="Auth.fillDemo('agent')" class="btn btn-secondary btn-sm" style="font-size:0.75rem;">Agent</button>
+          <button type="button" onclick="Auth.fillDemo('admin')" class="btn btn-secondary btn-sm" style="font-size:0.75rem;">Admin</button>
+        </div>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="name@company.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" id="login-btn" class="btn btn-primary btn-block" style="padding: 0.8rem; margin-top: 0.5rem;">
+          Sign In
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+        Don't have an account? <a href="/register.html" style="font-weight: 600;">Sign up</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script>
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const btn = document.getElementById("login-btn");
+
+      try {
+        btn.innerText = "Signing in...";
+        btn.disabled = true;
+
+        const res = await Auth.login(email, password);
+        showToast("Login successful!", "success");
+
+        // Role-based routing
+        setTimeout(() => {
+          if (res.user.role === "admin") {
+            window.location.href = "/admin_dashboard.html";
+          } else if (res.user.role === "agent") {
+            window.location.href = "/agent_dashboard.html";
+          } else {
+            window.location.href = "/customer_dashboard.html";
+          }
+        }, 500);
+
+      } catch (err) {
+        showToast(err.message, "error");
+        btn.innerText = "Sign In";
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
